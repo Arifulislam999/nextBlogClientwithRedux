@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body {
+  background: linear-gradient(to right, rgb(221, 214, 243), rgb(250, 172, 168));
+  -webkit-background-clip: text;
+}
+::-webkit-scrollbar {
+  width: 5px;
+}
+.custom-file-upload {
+  border: 1px solid #ccc;
+  display: inline-block;
+  padding: 6px 12px;
+  cursor: pointer;
+}
