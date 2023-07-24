@@ -1,33 +1,51 @@
 "use client";
+import {
+  useEditSinglePostMutation,
+  useGetSinglePostQuery,
+} from "@/Redux/Features/Blog/blogApi";
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import Loader from "../Loader/Loader";
 
-import { useUserPostMutation } from "@/Redux/Features/Blog/blogApi";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-
-const UploadPage = () => {
+const UpdateForm = () => {
   const router = useRouter();
-  const [userPost, { isSuccess, error }] = useUserPostMutation();
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
+  const {
+    data: singlePost,
+    isSuccess,
+    isLoading,
+    error,
+  } = useGetSinglePostQuery({ id });
+  const [editSinglePost, { isLoading: updateingLoad }] =
+    useEditSinglePostMutation();
   const [post, setPost] = useState("");
   const [tag, setTag] = useState("");
   const handlerSubmit = async (e) => {
     e.preventDefault();
     try {
-      await userPost({ data: { post, tag } });
+      await editSinglePost({ id, data: { post, tag } });
     } catch (error) {
-      console.log("not upload post.");
+      console.log("can't update single post.");
+    } finally {
+      router.push("/profile");
     }
   };
   useEffect(() => {
-    if (isSuccess) {
-      router.push("/");
+    if (singlePost) {
+      setPost(singlePost?.singlePost?.post);
+      setTag(singlePost?.singlePost?.tag);
     }
-  }, [isSuccess]);
-  return (
+  }, [isSuccess, singlePost]);
+  console.log(error);
+  return isLoading ? (
+    <Loader />
+  ) : (
     <form
       onSubmit={handlerSubmit}
       className="w-full md:w-3/4  border-green-800 p-6 rounded-md border-4 bg-gray-900 text-yellow-200/40"
     >
-      <h2 className="text-2xl pb-3 font-semibold">Upload Post</h2>
+      <h2 className="text-2xl pb-3 font-semibold">Edit Post</h2>
       <div>
         <div className="flex flex-col mb-3">
           <label htmlFor="name">Post</label>
@@ -69,11 +87,11 @@ const UploadPage = () => {
           type="submit"
           className="w-full bg-gray-900 border border-red-500 px-4 py-2 transition duration-50 focus:outline-none font-semibold hover:bg-red-500 hover:text-white text-xl cursor-pointer"
         >
-          Send
+          {updateingLoad ? "Updateing Post..." : "Edit Post"}
         </button>
       </div>
     </form>
   );
 };
 
-export default UploadPage;
+export default UpdateForm;

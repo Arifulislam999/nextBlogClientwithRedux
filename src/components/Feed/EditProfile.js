@@ -1,10 +1,40 @@
 "use client";
 
+import {
+  useGetLogInUserQuery,
+  useUpdateUserMutation,
+} from "@/Redux/Features/Blog/blogApi";
+import { useEffect, useState } from "react";
+import Loader from "../Loader/Loader";
+import { useRouter } from "next/navigation";
+
 const EditProfile = () => {
-  const handlerSubmit = (e) => {
+  const router = useRouter();
+  const { data: userData, isSuccess, isLoading } = useGetLogInUserQuery();
+  const [updateUser] = useUpdateUserMutation();
+  const [name, setName] = useState();
+  const [phone, setPhone] = useState();
+  const [bio, setBio] = useState();
+  const [file, setFile] = useState();
+  const handlerSubmit = async (e) => {
     e.preventDefault();
+    try {
+      await updateUser({ data: { name, phone, photo: file, bio } });
+    } catch (error) {
+      console.log("Can not update User Data");
+    } finally {
+      router.push("/profile");
+    }
   };
-  return (
+  useEffect(() => {
+    setBio(userData?.bio);
+    setName(userData?.name);
+    setPhone(userData?.phone);
+  }, [userData, isSuccess]);
+
+  return isLoading === true ? (
+    <Loader />
+  ) : (
     <div>
       <div className="min-h-screen  py-6 flex flex-col justify-center sm:py-12">
         <div className="relative py-3 sm:max-w-xl sm:mx-auto">
@@ -28,6 +58,8 @@ const EditProfile = () => {
                         className="peer placeholder-transparent h-10 w-full border-b-2 border-gray-300 text-gray-900 focus:outline-none focus:borer-rose-600"
                         placeholder="Enter Name"
                         required
+                        value={name || ""}
+                        onChange={(e) => setName(e?.target.value)}
                       />
                       <label
                         htmlFor="name"
@@ -36,15 +68,38 @@ const EditProfile = () => {
                         Name
                       </label>
                     </div>
+
+                    <div className="relative">
+                      <input
+                        autoComplete="on"
+                        id="email"
+                        name="email"
+                        type="email"
+                        className="peer placeholder-transparent h-10 w-full border-b-2 border-gray-300 text-gray-900 bg-gray-200 pl-2 focus:outline-none focus:borer-rose-600"
+                        placeholder="Enter Name"
+                        required
+                        value={userData?.email || ""}
+                        disabled
+                      />
+                      <label
+                        htmlFor="phone"
+                        className="absolute left-0 -top-3.5 text-gray-600 text-sm peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-440 peer-placeholder-shown:top-2 transition-all peer-focus:-top-3.5 peer-focus:text-gray-600 peer-focus:text-sm"
+                      >
+                        Email
+                      </label>
+                    </div>
+
                     <div className="relative">
                       <input
                         autoComplete="on"
                         id="phone"
                         name="phone"
-                        type="number"
+                        type="text"
                         className="peer placeholder-transparent h-10 w-full border-b-2 border-gray-300 text-gray-900 focus:outline-none focus:borer-rose-600"
                         placeholder="Enter Name"
                         required
+                        value={phone || ""}
+                        onChange={(e) => setPhone(e?.target.value)}
                       />
                       <label
                         htmlFor="phone"
@@ -53,6 +108,27 @@ const EditProfile = () => {
                         Phone Number
                       </label>
                     </div>
+
+                    <div className="relative">
+                      <input
+                        autoComplete="on"
+                        id="bio"
+                        name="bio"
+                        type="text"
+                        className="peer placeholder-transparent h-10 w-full border-b-2 border-gray-300 text-gray-900 focus:outline-none focus:borer-rose-600"
+                        placeholder="Update Bio..."
+                        required
+                        value={bio || ""}
+                        onChange={(e) => setBio(e?.target.value)}
+                      />
+                      <label
+                        htmlFor="bio"
+                        className="absolute left-0 -top-3.5 text-gray-600 text-sm peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-440 peer-placeholder-shown:top-2 transition-all peer-focus:-top-3.5 peer-focus:text-gray-600 peer-focus:text-sm"
+                      >
+                        Bio
+                      </label>
+                    </div>
+
                     <div>
                       <label
                         htmlFor="file-upload"
@@ -60,7 +136,12 @@ const EditProfile = () => {
                       >
                         Upload Your Profile
                       </label>
-                      <input id="file-upload" type="file" />
+                      <input
+                        id="file-upload"
+                        type="file"
+                        value={file || ""}
+                        onChange={(e) => setFile(e?.target.value)}
+                      />
                     </div>
 
                     <div className="relative">

@@ -9,6 +9,7 @@ const authApi = apiSlice.injectEndpoints({
         body: data,
         headers: { "Content-Type": "application/json" },
       }),
+      invalidatesTags: ["loginstatus"],
     }),
     userLogIn: builder.mutation({
       query: (data) => ({
@@ -16,11 +17,17 @@ const authApi = apiSlice.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["loginstatus"],
+    }),
+    userLogOut: builder.query({
+      query: () => "/api/user/logout",
+      invalidatesTags: ["loginstatus"],
     }),
     userAlreadyLoggedIn: builder.query({
       query: () => ({
         url: "/api/user/loggedin",
       }),
+      providesTags: ["loginstatus"],
     }),
   }),
 });
@@ -28,4 +35,5 @@ export const {
   useUserRegistationMutation,
   useUserLogInMutation,
   useUserAlreadyLoggedInQuery,
+  useUserLogOutQuery,
 } = authApi;

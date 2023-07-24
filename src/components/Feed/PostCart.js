@@ -1,40 +1,53 @@
 "use client";
-import Link from "next/link";
-import logo from "../../../public/assets/logo.svg";
-import Image from "next/image";
 
-const PostCart = () => {
+import { useGetMyUserIdQuery } from "@/Redux/Features/Blog/blogApi";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+
+const PostCart = ({ post }) => {
+  const { data: userId, isSuccess } = useGetMyUserIdQuery();
+  const router = useRouter();
+  const { post: userPost, tag, creatorId } = post || {};
+  const { name, email, _id } = creatorId || {};
+  const handlerUser = (id) => {
+    if (userId.userId === id) {
+      router.push("/profile");
+    } else {
+      router.push(`/singleuserquery?id=${id}`);
+    }
+  };
   return (
     <div className="min-w-0 max-w-md px-3 py-3 min-h-0 max-h-96 border-2 shadow-lg border-sky-300/60 rounded-md m-2 bg-red-200/75 opacity-80 ">
       <div className="flex text-center justify-center">
         <div>
-          <Link href={"/"}>
-            <Image
-              src={logo}
-              alt="user"
-              width={40}
-              height={40}
-              className="rounded-full border-2 cursor-pointer border-red-300 opacity-100"
-            />
-          </Link>
+          <Image
+            onClick={() => handlerUser(_id)}
+            src={
+              post?.photo ||
+              "https://static.vecteezy.com/system/resources/previews/000/439/863/original/vector-users-icon.jpg"
+            }
+            alt="user"
+            width={40}
+            height={40}
+            className="rounded-full border-2 cursor-pointer border-red-300 opacity-100"
+          />
         </div>
         <div>
           <h2 className="font-mono font-bold ">
-            <span className="cursor-pointer">Ariful Islam Joy</span>
+            <span className="cursor-pointer text-gray-500 capitalize">
+              {name}
+            </span>
           </h2>
-          <span className="ml-2">jsarif5000007@gmail.com</span>
+          <span className="ml-2">{email}</span>
         </div>
       </div>
       <div className="flex justify-center">
         <hr className="w-2/3 mt-2 bg-gray-800 border-1" />
       </div>
       <div className="mt-2 ">
-        <p className="text-gray-600 max-h-32 overflow-y-scroll">
-          This is my post section . This section i will show my post. This is my
-          This is my post section . This section i will show my post. post This
-        </p>
+        <p className="text-gray-600 max-h-32 overflow-y-scroll">{userPost}</p>
         <p className="text-start text-blue-500 ">
-          <span className="cursor-pointer">#tag</span>
+          <span className="cursor-pointer">#{tag}</span>
         </p>
       </div>
     </div>

@@ -14,3 +14,9 @@ body {
   padding: 6px 12px;
   cursor: pointer;
 }
+.loader {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}

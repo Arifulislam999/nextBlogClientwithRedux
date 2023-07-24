@@ -2,9 +2,13 @@
 import { DebounceInput } from "react-debounce-input";
 import PostCart from "./PostCart";
 import { useState } from "react";
+import { useGetAllPostQuery } from "@/Redux/Features/Blog/blogApi";
+import Loader from "../Loader/Loader";
 
 const Feed = () => {
+  const { data: postData, isSuccess } = useGetAllPostQuery();
   const [searchText, setSearchText] = useState("");
+
   return (
     <div>
       <div className="relative w-full text-center">
@@ -20,11 +24,13 @@ const Feed = () => {
         />
       </div>
       <div className="mt-5 flex justify-center flex-wrap">
-        <PostCart />
-        <PostCart />
-        <PostCart />
-        <PostCart />
-        <PostCart />
+        {isSuccess ? (
+          postData?.allPost?.map((post, index) => (
+            <PostCart post={post} key={index} />
+          ))
+        ) : (
+          <Loader />
+        )}
       </div>
     </div>
   );
