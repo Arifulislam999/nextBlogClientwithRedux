@@ -12,6 +12,7 @@ export const apiSlice = createApi({
     "edit-post",
     "edit-post-one",
     "delete-post",
+    "loginstatus-status",
   ],
   endpoints: (builder) => ({}),
 });

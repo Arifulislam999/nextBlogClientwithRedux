@@ -1,26 +1,29 @@
 "use client";
 import Image from "next/image";
-import React, { useState } from "react";
+import { useState } from "react";
 // import logo from "../../../public/assets/logo.svg";
-import logoText from "../../../public/assets/logo-text.svg";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import {
   useUserAlreadyLoggedInQuery,
   useUserLogOutQuery,
 } from "@/Redux/Features/Blog/authApi";
-import { useGetLogInUserQuery } from "@/Redux/Features/Blog/blogApi";
+import { logOutTrueFalse } from "@/Redux/Features/Blog/blogSlice";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
+import logoText from "../../../public/assets/logo-text.svg";
 
 const Navbar = () => {
-  const { data: loginUserData, isLoading } = useGetLogInUserQuery();
-  const [logOut, setLogOut] = useState(true);
-  const [userIcon, setUserIcon] = useState(true);
+  // const { data: loginUserData, isLoading } = useGetLogInUserQuery();
+  const dispatch = useDispatch();
+  const { logStatus } = useSelector((state) => state.text);
+  // const [logOut, setLogOut] = useState(logStatus);
+  // const [userIcon, setUserIcon] = useState(true);
 
   const {} = useUserLogOutQuery(undefined, {
-    skip: logOut,
+    skip: logStatus,
   });
   const { data: userStatus } = useUserAlreadyLoggedInQuery();
-  let isLoggedIn = userStatus;
+  const isLoggedIn = userStatus?.status;
   const router = useRouter();
   const [show, setShow] = useState(false);
   const handlerUser = () => {
@@ -46,7 +49,7 @@ const Navbar = () => {
       </div>
 
       <div className="flex">
-        {isLoggedIn && userIcon === true ? (
+        {isLoggedIn && logStatus === true ? (
           <>
             <div className="mr-3 mt-2">
               <Link href={"/upload-post"}>
@@ -60,30 +63,15 @@ const Navbar = () => {
             </div>
 
             <div className="relative">
-              {!isLoading ? (
-                <Image
-                  onClick={handlerUser}
-                  src={
-                    loginUserData?.photo ||
-                    "https://cdn.pixabay.com/photo/2014/04/03/10/32/user-310807_1280.png"
-                  }
-                  alt="user"
-                  width={45}
-                  height={45}
-                  className="rounded-full border-2 border-green-500 cursor-pointer"
-                />
-              ) : (
-                <Image
-                  onClick={handlerUser}
-                  src={
-                    "https://cdn.pixabay.com/photo/2014/04/03/10/32/user-310807_1280.png"
-                  }
-                  alt="user"
-                  width={45}
-                  height={45}
-                  className="rounded-full border-2 border-green-500 cursor-pointer"
-                />
-              )}
+              <Image
+                onClick={handlerUser}
+                src={userStatus?.photo}
+                alt="user"
+                width={45}
+                height={45}
+                className="rounded-full border-2 border-green-500 cursor-pointer"
+              />
+
               {show && (
                 <div className="flex flex-col absolute w-28 mt-1 h-20 bg-gray-400 border-2 border-sky-400 rounded-md">
                   <div>
@@ -106,10 +94,9 @@ const Navbar = () => {
                   </p>
                   <p
                     onClick={() => {
-                      setShow(false),
-                        router.push("/login"),
-                        setLogOut(false),
-                        setUserIcon(false);
+                      router.replace("/login"),
+                        setShow(false),
+                        dispatch(logOutTrueFalse(false));
                     }}
                     className="cursor-pointer ml-2 font-serif hover:text-white hover:font-bold delay-100 transition-all"
                   >

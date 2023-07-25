@@ -1,11 +1,14 @@
 "use client";
 import { useUserLogInMutation } from "@/Redux/Features/Blog/authApi";
+import { logOutTrueFalse } from "@/Redux/Features/Blog/blogSlice";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 
 const FormData = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
   const [userLogIn, { status, error }] = useUserLogInMutation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -78,6 +81,9 @@ const FormData = () => {
                   </div>
                   <div className="relative">
                     <button
+                      onClick={() => {
+                        dispatch(logOutTrueFalse(true));
+                      }}
                       type="submit"
                       className="bg-blue-500 text-white rounded-md px-2 py-1"
                     >

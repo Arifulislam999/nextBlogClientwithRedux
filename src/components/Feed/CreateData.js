@@ -1,12 +1,15 @@
 "use client";
 
 import { useUserRegistationMutation } from "@/Redux/Features/Blog/authApi";
+import { logOutTrueFalse } from "@/Redux/Features/Blog/blogSlice";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 
 const CreateData = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
   const [userRegistation, { data: userData, error, status }] =
     useUserRegistationMutation();
   const [name, setName] = useState("");
@@ -100,6 +103,9 @@ const CreateData = () => {
                     </div>
                     <div className="relative">
                       <button
+                        onClick={() => {
+                          dispatch(logOutTrueFalse(true));
+                        }}
                         type="submit"
                         className="bg-blue-500 text-white rounded-md px-2 py-1"
                       >

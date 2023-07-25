@@ -1,7 +1,7 @@
 "use client";
 
 import { DebounceInput } from "react-debounce-input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ProfileCart from "./ProfileCart";
 // import person from "../../../public/assets/p-1.jpg";
 import Image from "next/image";
@@ -12,13 +12,25 @@ import {
 import { useUserAlreadyLoggedInQuery } from "@/Redux/Features/Blog/authApi";
 import FormData from "./FormData";
 import Loader from "../Loader/Loader";
+import { useDispatch, useSelector } from "react-redux";
+import { removeSearchText } from "@/Redux/Features/Blog/blogSlice";
 const Profile = () => {
-  const { data: userStatus } = useUserAlreadyLoggedInQuery();
+  const dispatch = useDispatch();
+  const { text } = useSelector((state) => state.text);
+  const { data: userStatus, isLoading } = useUserAlreadyLoggedInQuery();
   const { data: postData, isSuccess } = useGetLoginUserPostQuery();
-  let isLoggedIn = userStatus;
+  let isLoggedIn = userStatus?.status;
   const { data: loginUser } = useGetLogInUserQuery();
   const [searchText, setSearchText] = useState("");
+  useEffect(() => {
+    setSearchText(text);
+  }, [text]);
 
+  const filterBySearch = () => {
+    const regex = new RegExp(searchText, "i"); // i for case insensitive search
+    return postData?.allPost?.filter((item) => regex.test(item?.tag));
+  };
+  const filterText = filterBySearch();
   return isLoggedIn === true ? (
     <div>
       <div className="flex flex-col items-center">
@@ -47,7 +59,7 @@ const Profile = () => {
             <h2 className="text-xl   ml-4 font-bold font-mono">
               Phone:{loginUser?.phone}
             </h2>
-            <h2 className="text-md text-justify   ml-4 text-gray-700 font-mono">
+            <h2 className="text-md text-justify  max-h-52 overflow-scroll ml-4 text-gray-700 font-mono">
               Bio:{loginUser?.bio}
             </h2>
           </div>
@@ -59,7 +71,10 @@ const Profile = () => {
             type="search"
             placeholder="Search for a tag or a username"
             value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
+            onChange={(e) => {
+              setSearchText(e.target.value);
+              dispatch(removeSearchText(e.target.value));
+            }}
             required
             className="font-mono bg-sky-200 text-gray-600 px-3 py-2 rounded-sm w-2/3 text-xs sm:text-lg"
           />
@@ -73,7 +88,7 @@ const Profile = () => {
       </div>
       <div className="flex flex-wrap justify-center">
         {isSuccess ? (
-          postData?.allPost?.map((post, index) => (
+          filterText?.map((post, index) => (
             <ProfileCart key={index} post={post} />
           ))
         ) : (
@@ -84,9 +99,7 @@ const Profile = () => {
       </div>
     </div>
   ) : (
-    <>
-      <FormData />
-    </>
+    <>{isLoading ? <Loader /> : <FormData />}</>
   );
 };
 

@@ -21,8 +21,8 @@ const SingleUser = () => {
       <div className="flex flex-col items-center">
         <h2 className="text-4xl font-bold py-4">Discover & Share</h2>
         <h2 className="text-3xl h-ai font-bold my-3">AI-Powered Prompts</h2>
-        <div className="flex justify-center flex-wrap w-full my-3">
-          <div className="">
+        <div className="flex justify-center flex-wrap w-3/4 my-3">
+          <div className="basis-1/2">
             <Image
               src={
                 photo ||
@@ -34,7 +34,7 @@ const SingleUser = () => {
               className="border-2 border-blue-500 rounded-md"
             />
           </div>
-          <div>
+          <div className="basis-1/2">
             <h2 className="text-3xl h-ai mt-12 ml-4 font-bold capitalize font-serif">
               Name:{name}
             </h2>
@@ -42,7 +42,7 @@ const SingleUser = () => {
             <h2 className="text-xl   ml-4 font-bold font-mono">
               Phone:{phone}
             </h2>
-            <h2 className="text-md text-justify   ml-4 text-gray-700 font-mono">
+            <h2 className="text-md text-justify max-h-52 overflow-scroll ml-4 text-gray-700 font-mono">
               Bio:{bio}
             </h2>
           </div>

@@ -1,11 +1,14 @@
 "use client";
 import { useDeletePostMutation } from "@/Redux/Features/Blog/blogApi";
+import { searchText } from "@/Redux/Features/Blog/blogSlice";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { BiHighlight, BiTrash } from "react-icons/bi";
+import { useDispatch } from "react-redux";
 
 const ProfileCart = ({ post }) => {
+  const dispatch = useDispatch();
   const router = useRouter();
   const [deletePost] = useDeletePostMutation();
   const { post: userPost, tag, creatorId, _id } = post || {};
@@ -17,6 +20,9 @@ const ProfileCart = ({ post }) => {
     } catch (error) {
       console.log("can't delete a user.");
     }
+  };
+  const handlerName = (clickText) => {
+    dispatch(searchText(clickText));
   };
 
   return (
@@ -35,7 +41,7 @@ const ProfileCart = ({ post }) => {
           />
         </div>
         <div>
-          <h2 className="font-mono font-bold mr-4">{name}</h2>
+          <h2 className="font-mono font-bold mr-4 cursor-pointer">{name}</h2>
           <span className="ml-2">{email}</span>
         </div>
 
@@ -55,8 +61,13 @@ const ProfileCart = ({ post }) => {
         <hr className="w-2/3 mt-2 bg-gray-800 border-1" />
       </div>
       <div className="mt-2 text-center">
-        <p className="text-gray-600">{userPost}</p>
-        <p className="text-start text-blue-500">#{tag}</p>
+        <p className="text-gray-600 capitalize">{userPost}</p>
+        <p
+          className="text-start text-blue-500 cursor-pointer capitalize"
+          onClick={() => handlerName(tag)}
+        >
+          #{tag}
+        </p>
       </div>
     </div>
   );

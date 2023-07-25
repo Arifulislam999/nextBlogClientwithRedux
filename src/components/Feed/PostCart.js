@@ -1,20 +1,26 @@
 "use client";
 
 import { useGetMyUserIdQuery } from "@/Redux/Features/Blog/blogApi";
+import { searchText } from "@/Redux/Features/Blog/blogSlice";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
 
 const PostCart = ({ post }) => {
-  const { data: userId, isSuccess } = useGetMyUserIdQuery();
+  const dispatch = useDispatch();
+  const { data: userId } = useGetMyUserIdQuery();
   const router = useRouter();
   const { post: userPost, tag, creatorId } = post || {};
   const { name, email, _id } = creatorId || {};
   const handlerUser = (id) => {
-    if (userId.userId === id) {
+    if (userId?.userId === id) {
       router.push("/profile");
     } else {
       router.push(`/singleuserquery?id=${id}`);
     }
+  };
+  const handlerName = (clickText) => {
+    dispatch(searchText(clickText));
   };
   return (
     <div className="min-w-0 max-w-md px-3 py-3 min-h-0 max-h-96 border-2 shadow-lg border-sky-300/60 rounded-md m-2 bg-red-200/75 opacity-80 ">
@@ -34,7 +40,10 @@ const PostCart = ({ post }) => {
         </div>
         <div>
           <h2 className="font-mono font-bold ">
-            <span className="cursor-pointer text-gray-500 capitalize">
+            <span
+              className="cursor-pointer text-gray-500 capitalize"
+              onClick={() => handlerName(name)}
+            >
               {name}
             </span>
           </h2>
@@ -45,9 +54,11 @@ const PostCart = ({ post }) => {
         <hr className="w-2/3 mt-2 bg-gray-800 border-1" />
       </div>
       <div className="mt-2 ">
-        <p className="text-gray-600 max-h-32 overflow-y-scroll">{userPost}</p>
+        <p className="text-gray-600 max-h-32 overflow-y-scroll capitalize">
+          {userPost}
+        </p>
         <p className="text-start text-blue-500 ">
-          <span className="cursor-pointer">#{tag}</span>
+          <span className="cursor-pointer capitalize">#{tag}</span>
         </p>
       </div>
     </div>

@@ -6,7 +6,7 @@ body {
   -webkit-background-clip: text;
 }
 ::-webkit-scrollbar {
-  width: 5px;
+  width: 0px;
 }
 .custom-file-upload {
   border: 1px solid #ccc;

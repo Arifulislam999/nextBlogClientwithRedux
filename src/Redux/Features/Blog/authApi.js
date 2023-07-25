@@ -19,15 +19,15 @@ const authApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["loginstatus"],
     }),
-    userLogOut: builder.query({
-      query: () => "/api/user/logout",
-      invalidatesTags: ["loginstatus"],
-    }),
     userAlreadyLoggedIn: builder.query({
       query: () => ({
         url: "/api/user/loggedin",
       }),
-      providesTags: ["loginstatus"],
+      providesTags: ["loginstatus", "loginstatus-status"],
+    }),
+    userLogOut: builder.query({
+      query: () => "/api/user/logout",
+      invalidatesTags: ["loginstatus-status"],
     }),
   }),
 });

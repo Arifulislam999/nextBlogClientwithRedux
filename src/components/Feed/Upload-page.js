@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 const UploadPage = () => {
   const router = useRouter();
-  const [userPost, { isSuccess, error }] = useUserPostMutation();
+  const [userPost, { isSuccess, error, isLoading }] = useUserPostMutation();
   const [post, setPost] = useState("");
   const [tag, setTag] = useState("");
   const handlerSubmit = async (e) => {
@@ -69,7 +69,7 @@ const UploadPage = () => {
           type="submit"
           className="w-full bg-gray-900 border border-red-500 px-4 py-2 transition duration-50 focus:outline-none font-semibold hover:bg-red-500 hover:text-white text-xl cursor-pointer"
         >
-          Send
+          {isLoading ? "Sending.." : "Send"}
         </button>
       </div>
     </form>
