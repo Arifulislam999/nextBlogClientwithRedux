@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 const EditProfile = () => {
   const router = useRouter();
   const { data: userData, isSuccess, isLoading } = useGetLogInUserQuery();
-  const [updateUser] = useUpdateUserMutation();
+  const [updateUser, { isLoading: isLoadingUpdate }] = useUpdateUserMutation();
   const [name, setName] = useState();
   const [phone, setPhone] = useState();
   const [bio, setBio] = useState();
@@ -134,7 +134,7 @@ const EditProfile = () => {
                         htmlFor="file-upload"
                         className="custom-file-upload"
                       >
-                        Upload Your Profile
+                        Upload Your Profile Picture
                       </label>
                       <input
                         id="file-upload"
@@ -149,7 +149,9 @@ const EditProfile = () => {
                         type="submit"
                         className="bg-blue-500 text-white rounded-md px-2 py-1"
                       >
-                        Update Profile
+                        {isLoadingUpdate
+                          ? "Update Profile..."
+                          : "Update Profile"}
                       </button>
                     </div>
                   </div>

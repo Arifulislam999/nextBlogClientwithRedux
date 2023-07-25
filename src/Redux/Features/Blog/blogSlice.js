@@ -2,6 +2,7 @@ const { createSlice } = require("@reduxjs/toolkit");
 const initialState = {
   text: "",
   logStatus: true,
+  page: 1,
 };
 const blogSlice = createSlice({
   name: "blogSlice",
@@ -16,8 +17,11 @@ const blogSlice = createSlice({
     logOutTrueFalse: (state, action) => {
       state.logStatus = action.payload;
     },
+    paginationPage: (state, action) => {
+      state.page = action.payload;
+    },
   },
 });
-export const { searchText, removeSearchText, logOutTrueFalse } =
+export const { searchText, removeSearchText, logOutTrueFalse, paginationPage } =
   blogSlice.actions;
 export default blogSlice.reducer;

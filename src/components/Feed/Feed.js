@@ -1,4 +1,5 @@
 "use client";
+import "../../styles/pagination.css";
 import { DebounceInput } from "react-debounce-input";
 import PostCart from "./PostCart";
 import { useEffect, useState } from "react";
@@ -6,12 +7,18 @@ import { useGetAllPostQuery } from "@/Redux/Features/Blog/blogApi";
 import Loader from "../Loader/Loader";
 import { useDispatch, useSelector } from "react-redux";
 import { removeSearchText } from "@/Redux/Features/Blog/blogSlice";
-
+import ResponsivePagination from "react-responsive-pagination";
+import "react-responsive-pagination/themes/classic.css";
 const Feed = () => {
   const dispatch = useDispatch();
   const { text } = useSelector((state) => state.text);
-  const { data: postData, isSuccess } = useGetAllPostQuery();
+  const { data: postData, isSuccess } = useGetAllPostQuery({
+    page: Number(sessionStorage?.getItem("pageNumber") || 1),
+  });
   const [searchText, setSearchText] = useState("");
+  const [currentPage, setCurrentPage] = useState(
+    Number(sessionStorage?.getItem("pageNumber")) || 1
+  );
   useEffect(() => {
     setSearchText(text);
   }, [text]);
@@ -23,6 +30,13 @@ const Feed = () => {
   };
 
   const filter = filterBySearch();
+
+  // Pagination handler
+  const handlerPageChange = (page) => {
+    sessionStorage?.setItem("pageNumber", page);
+    setCurrentPage(page);
+  };
+
   return (
     <div>
       <div className="relative w-full text-center">
@@ -47,6 +61,18 @@ const Feed = () => {
           <Loader />
         )}
       </div>
+      {/* pagination  */}
+      {isSuccess && (
+        <div className="page">
+          <div className="pagination-container w-fit">
+            <ResponsivePagination
+              current={currentPage}
+              total={Math.ceil(postData?.totalPost / 5)}
+              onPageChange={(page) => handlerPageChange(page)}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

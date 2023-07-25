@@ -1,5 +1,4 @@
 const { apiSlice } = require("../API/apiSlice");
-
 const blogApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getLogInUser: builder.query({
@@ -23,8 +22,8 @@ const blogApi = apiSlice.injectEndpoints({
       invalidatesTags: ["upload-post", "edit-post"],
     }),
     getAllPost: builder.query({
-      query: () => "/api/post/allpost",
-      providesTags: ["upload-post", "edit-post", "delete-post"],
+      query: ({ page }) => `/api/post/allpost?page=${page}`,
+      providesTags: ["upload-post", "edit-post", "delete-post", "update-data"],
     }),
     getLoginUserPost: builder.query({
       query: () => "/api/post/loggedinuserpost",
