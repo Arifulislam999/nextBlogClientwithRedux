@@ -15,13 +15,25 @@ const EditProfile = () => {
   const [name, setName] = useState();
   const [phone, setPhone] = useState();
   const [bio, setBio] = useState();
-  const [file, setFile] = useState();
+  const [file, setFile] = useState("");
+  const [fileE, setFileError] = useState(false);
   const handlerSubmit = async (e) => {
     e.preventDefault();
     try {
-      await updateUser({ data: { name, phone, photo: file, bio } });
+      if (file) {
+        if (file.size < 1024 * 1024 * 10 && file.startsWith("image/")) {
+          await updateUser({ data: { name, phone, photo: file, bio } });
+        } else {
+          setFileError(true);
+          setTimeout(() => {
+            setFileError(false);
+          }, 3000);
+        }
+      } else {
+        await updateUser({ data: { name, phone, photo: file, bio } });
+      }
     } catch (error) {
-      console.log("Can not update User Data");
+      console.log("Can not update User Data", file);
     } finally {
       router.push("/profile");
     }
@@ -46,7 +58,7 @@ const EditProfile = () => {
                   Update & Edit Your Profile
                 </h1>
               </div>
-              <form onSubmit={handlerSubmit}>
+              <form onSubmit={handlerSubmit} encType="multipart/form-data">
                 <div className="divide-y divide-gray-200">
                   <div className="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
                     <div className="relative">
@@ -139,8 +151,9 @@ const EditProfile = () => {
                       <input
                         id="file-upload"
                         type="file"
-                        value={file || ""}
-                        onChange={(e) => setFile(e?.target.value)}
+                        accept="image/*"
+                        multiple
+                        onChange={(e) => setFile(e?.target.files[0])}
                       />
                     </div>
 
@@ -154,6 +167,7 @@ const EditProfile = () => {
                           : "Update Profile"}
                       </button>
                     </div>
+                    {fileE && <h2>Image Large or Invalid.</h2>}
                   </div>
                 </div>
               </form>

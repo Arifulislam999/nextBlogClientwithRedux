@@ -6,35 +6,58 @@ import { useEffect, useState } from "react";
 import { useGetAllPostQuery } from "@/Redux/Features/Blog/blogApi";
 import Loader from "../Loader/Loader";
 import { useDispatch, useSelector } from "react-redux";
-import { removeSearchText } from "@/Redux/Features/Blog/blogSlice";
+import {
+  paginationPage,
+  removeSearchText,
+} from "@/Redux/Features/Blog/blogSlice";
 import ResponsivePagination from "react-responsive-pagination";
 import "react-responsive-pagination/themes/classic.css";
+
 const Feed = () => {
+  const storeData = () => {
+    return (
+      typeof sessionStorage !== "undefined" &&
+      JSON.parse(sessionStorage.getItem("No"))
+    );
+  };
+  let sData = storeData();
   const dispatch = useDispatch();
-  const { text } = useSelector((state) => state.text);
-  const { data: postData, isSuccess } = useGetAllPostQuery({
-    page: Number(sessionStorage?.getItem("pageNumber") || 1),
-  });
+  const { text, page: rPage } = useSelector((state) => state.text);
+  useEffect(() => {
+    dispatch(paginationPage(JSON.parse(sessionStorage.getItem("No"))));
+  }, []);
+
+  const [currentPage, setCurrentPage] = useState(sData || 1);
   const [searchText, setSearchText] = useState("");
-  const [currentPage, setCurrentPage] = useState(
-    Number(sessionStorage?.getItem("pageNumber")) || 1
-  );
+
+  const { data: postData, isSuccess } = useGetAllPostQuery({
+    page: Number(rPage) || 1,
+    searchText: searchText,
+  });
+
   useEffect(() => {
     setSearchText(text);
   }, [text]);
-  const filterBySearch = () => {
-    const regex = new RegExp(searchText, "i"); // i for case insensitive search
-    return postData?.allPost?.filter(
-      (item) => regex.test(item?.tag) || regex.test(item?.creatorId?.name)
-    );
-  };
+  useEffect(() => {
+    if (searchText) {
+      setCurrentPage(1);
+    }
+  }, [searchText]);
+  // const filterBySearch = () => {
+  //   const regex = new RegExp(searchText, "i"); // i for case insensitive search
+  //   return postData?.allPost?.filter(
+  //     (item) => regex.test(item?.tag) || regex.test(item?.creatorId?.name)
+  //   );
+  // };
 
-  const filter = filterBySearch();
+  // const filter = filterBySearch();
 
   // Pagination handler
+
   const handlerPageChange = (page) => {
-    sessionStorage?.setItem("pageNumber", page);
     setCurrentPage(page);
+    sessionStorage.setItem("No", JSON.stringify(page));
+    dispatch(paginationPage(JSON.parse(sessionStorage.getItem("No"))));
   };
 
   return (
@@ -44,7 +67,7 @@ const Feed = () => {
           minLength={3}
           debounceTimeout={500}
           type="search"
-          placeholder="Search for a tag or a username"
+          placeholder="Search for a tag or click"
           value={searchText}
           onChange={(e) => {
             setSearchText(e.target.value);
@@ -56,7 +79,9 @@ const Feed = () => {
       </div>
       <div className="mt-5 flex justify-center flex-wrap">
         {isSuccess ? (
-          filter?.map((post, index) => <PostCart post={post} key={index} />)
+          postData?.allPost?.map((post, index) => (
+            <PostCart post={post} key={index} />
+          ))
         ) : (
           <Loader />
         )}

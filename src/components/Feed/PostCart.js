@@ -19,7 +19,7 @@ const PostCart = ({ post }) => {
       router.push(`/singleuserquery?id=${id}`);
     }
   };
-  const handlerName = (clickText) => {
+  const handlerTag = (clickText) => {
     dispatch(searchText(clickText));
   };
   return (
@@ -40,10 +40,7 @@ const PostCart = ({ post }) => {
         </div>
         <div>
           <h2 className="font-mono font-bold ">
-            <span
-              className="cursor-pointer text-gray-500 capitalize"
-              onClick={() => handlerName(name)}
-            >
+            <span className="cursor-pointer text-gray-500 capitalize">
               {name}
             </span>
           </h2>
@@ -58,7 +55,12 @@ const PostCart = ({ post }) => {
           {userPost}
         </p>
         <p className="text-start text-blue-500 ">
-          <span className="cursor-pointer capitalize">#{tag}</span>
+          <span
+            className="cursor-pointer capitalize"
+            onClick={() => handlerTag(tag)}
+          >
+            #{tag}
+          </span>
         </p>
       </div>
     </div>

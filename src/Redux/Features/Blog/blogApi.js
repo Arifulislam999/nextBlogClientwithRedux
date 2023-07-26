@@ -22,7 +22,8 @@ const blogApi = apiSlice.injectEndpoints({
       invalidatesTags: ["upload-post", "edit-post"],
     }),
     getAllPost: builder.query({
-      query: ({ page }) => `/api/post/allpost?page=${page}`,
+      query: ({ page, searchText }) =>
+        `/api/post/allpost?page=${page}&search=${searchText}`,
       providesTags: ["upload-post", "edit-post", "delete-post", "update-data"],
     }),
     getLoginUserPost: builder.query({

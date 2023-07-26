@@ -1,4 +1,5 @@
 const { createSlice } = require("@reduxjs/toolkit");
+
 const initialState = {
   text: "",
   logStatus: true,
